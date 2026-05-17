@@ -1,0 +1,23 @@
+replicaCount: 3
+
+image:
+  repository: demo-app
+  tag: v1
+  pullPolicy: Never
+
+appConfig:
+  APP_ENV: prod
+  LOG_LEVEL: warn
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 80
+
+resources:
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+  limits:
+    cpu: "1000m"
+    memory: "512Mi"

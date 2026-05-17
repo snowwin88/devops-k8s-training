@@ -1,0 +1,506 @@
+{
+  "version": 4,
+  "terraform_version": "1.15.3",
+  "serial": 25,
+  "lineage": "598a5854-bb8e-a777-4612-2915dee47e8a",
+  "outputs": {
+    "app_name": {
+      "value": "demo-app",
+      "type": "string"
+    },
+    "deployment_name": {
+      "value": "demo-app",
+      "type": "string"
+    },
+    "namespace": {
+      "value": "dev",
+      "type": "string"
+    },
+    "service_name": {
+      "value": "demo-app",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "kubernetes_deployment",
+      "name": "app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "id": "dev/demo-app",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 7,
+                "labels": {
+                  "app": "demo-app",
+                  "environment": "dev",
+                  "managed-by": "terraform"
+                },
+                "name": "demo-app",
+                "namespace": "dev",
+                "resource_version": "195052",
+                "uid": "68ec6229-d88c-49c9-88f2-841d88e9c876"
+              }
+            ],
+            "spec": [
+              {
+                "min_ready_seconds": 0,
+                "paused": false,
+                "progress_deadline_seconds": 600,
+                "replicas": "1",
+                "revision_history_limit": 10,
+                "selector": [
+                  {
+                    "match_expressions": [],
+                    "match_labels": {
+                      "app": "demo-app"
+                    }
+                  }
+                ],
+                "strategy": [
+                  {
+                    "rolling_update": [
+                      {
+                        "max_surge": "25%",
+                        "max_unavailable": "25%"
+                      }
+                    ],
+                    "type": "RollingUpdate"
+                  }
+                ],
+                "template": [
+                  {
+                    "metadata": [
+                      {
+                        "annotations": {},
+                        "generate_name": "",
+                        "generation": 0,
+                        "labels": {
+                          "app": "demo-app",
+                          "environment": "dev"
+                        },
+                        "name": "",
+                        "namespace": "",
+                        "resource_version": "",
+                        "uid": ""
+                      }
+                    ],
+                    "spec": [
+                      {
+                        "active_deadline_seconds": 0,
+                        "affinity": [],
+                        "automount_service_account_token": true,
+                        "container": [
+                          {
+                            "args": [],
+                            "command": [],
+                            "env": [],
+                            "env_from": [
+                              {
+                                "config_map_ref": [
+                                  {
+                                    "name": "demo-app-config",
+                                    "optional": false
+                                  }
+                                ],
+                                "prefix": "",
+                                "secret_ref": []
+                              },
+                              {
+                                "config_map_ref": [],
+                                "prefix": "",
+                                "secret_ref": [
+                                  {
+                                    "name": "demo-app-secret",
+                                    "optional": false
+                                  }
+                                ]
+                              }
+                            ],
+                            "image": "demo-app:tf-v2",
+                            "image_pull_policy": "Never",
+                            "lifecycle": [],
+                            "liveness_probe": [
+                              {
+                                "exec": [],
+                                "failure_threshold": 3,
+                                "grpc": [],
+                                "http_get": [
+                                  {
+                                    "host": "",
+                                    "http_header": [],
+                                    "path": "/",
+                                    "port": "80",
+                                    "scheme": "HTTP"
+                                  }
+                                ],
+                                "initial_delay_seconds": 15,
+                                "period_seconds": 20,
+                                "success_threshold": 1,
+                                "tcp_socket": [],
+                                "timeout_seconds": 1
+                              }
+                            ],
+                            "name": "demo-app",
+                            "port": [
+                              {
+                                "container_port": 80,
+                                "host_ip": "",
+                                "host_port": 0,
+                                "name": "",
+                                "protocol": "TCP"
+                              }
+                            ],
+                            "readiness_probe": [
+                              {
+                                "exec": [],
+                                "failure_threshold": 3,
+                                "grpc": [],
+                                "http_get": [
+                                  {
+                                    "host": "",
+                                    "http_header": [],
+                                    "path": "/",
+                                    "port": "80",
+                                    "scheme": "HTTP"
+                                  }
+                                ],
+                                "initial_delay_seconds": 5,
+                                "period_seconds": 10,
+                                "success_threshold": 1,
+                                "tcp_socket": [],
+                                "timeout_seconds": 1
+                              }
+                            ],
+                            "resources": [
+                              {
+                                "limits": {
+                                  "cpu": "500m",
+                                  "memory": "256Mi"
+                                },
+                                "requests": {
+                                  "cpu": "100m",
+                                  "memory": "128Mi"
+                                }
+                              }
+                            ],
+                            "security_context": [],
+                            "startup_probe": [],
+                            "stdin": false,
+                            "stdin_once": false,
+                            "termination_message_path": "/dev/termination-log",
+                            "termination_message_policy": "File",
+                            "tty": false,
+                            "volume_device": [],
+                            "volume_mount": [],
+                            "working_dir": ""
+                          }
+                        ],
+                        "dns_config": [],
+                        "dns_policy": "ClusterFirst",
+                        "enable_service_links": true,
+                        "host_aliases": [],
+                        "host_ipc": false,
+                        "host_network": false,
+                        "host_pid": false,
+                        "hostname": "",
+                        "image_pull_secrets": [],
+                        "init_container": [],
+                        "node_name": "",
+                        "node_selector": {},
+                        "os": [],
+                        "priority_class_name": "",
+                        "readiness_gate": [],
+                        "restart_policy": "Always",
+                        "runtime_class_name": "",
+                        "scheduler_name": "default-scheduler",
+                        "security_context": [],
+                        "service_account_name": "",
+                        "share_process_namespace": false,
+                        "subdomain": "",
+                        "termination_grace_period_seconds": 30,
+                        "toleration": [],
+                        "topology_spread_constraint": [],
+                        "volume": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_rollout": true
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "apps/v1",
+            "kind": "Deployment",
+            "name": "demo-app",
+            "namespace": "dev"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJ1cGRhdGUiOjYwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_service",
+      "name": "app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "id": "dev/demo-app",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 0,
+                "labels": {
+                  "app": "demo-app",
+                  "environment": "dev",
+                  "managed-by": "terraform"
+                },
+                "name": "demo-app",
+                "namespace": "dev",
+                "resource_version": "164178",
+                "uid": "3443d9ff-bd55-42b1-b365-8855cdae1ad0"
+              }
+            ],
+            "spec": [
+              {
+                "allocate_load_balancer_node_ports": true,
+                "cluster_ip": "10.96.14.5",
+                "cluster_ips": [
+                  "10.96.14.5"
+                ],
+                "external_ips": [],
+                "external_name": "",
+                "external_traffic_policy": "Cluster",
+                "health_check_node_port": 0,
+                "internal_traffic_policy": "Cluster",
+                "ip_families": [
+                  "IPv4"
+                ],
+                "ip_family_policy": "SingleStack",
+                "load_balancer_class": "",
+                "load_balancer_ip": "",
+                "load_balancer_source_ranges": [],
+                "port": [
+                  {
+                    "app_protocol": "",
+                    "name": "",
+                    "node_port": 32245,
+                    "port": 80,
+                    "protocol": "TCP",
+                    "target_port": "80"
+                  }
+                ],
+                "publish_not_ready_addresses": false,
+                "selector": {
+                  "app": "demo-app"
+                },
+                "session_affinity": "None",
+                "session_affinity_config": [],
+                "type": "NodePort"
+              }
+            ],
+            "status": [
+              {
+                "load_balancer": [
+                  {
+                    "ingress": []
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_load_balancer": true
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "Service",
+            "name": "demo-app",
+            "namespace": "dev"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ=="
+        }
+      ]
+    },
+    {
+      "module": "module.demo_app",
+      "mode": "managed",
+      "type": "kubernetes_config_map",
+      "name": "app_config",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "binary_data": {},
+            "data": {
+              "APP_ENV": "dev",
+              "LOG_LEVEL": "debug"
+            },
+            "id": "dev/demo-app-config",
+            "immutable": false,
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 0,
+                "labels": {
+                  "app": "demo-app",
+                  "environment": "dev",
+                  "managed-by": "terraform"
+                },
+                "name": "demo-app-config",
+                "namespace": "dev",
+                "resource_version": "155526",
+                "uid": "bf5cbcef-f2a2-4d75-8770-218116386d90"
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "ConfigMap",
+            "name": "demo-app-config",
+            "namespace": "dev"
+          },
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.demo_app",
+      "mode": "managed",
+      "type": "kubernetes_namespace",
+      "name": "dev",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "dev",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 0,
+                "labels": {
+                  "environment": "dev",
+                  "managed-by": "terraform"
+                },
+                "name": "dev",
+                "resource_version": "133774",
+                "uid": "cb89d381-0fa4-4553-9fbf-b5438e0dbe9f"
+              }
+            ],
+            "timeouts": null,
+            "wait_for_default_service_account": false
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "Namespace",
+            "name": "dev"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiZGVsZXRlIjozMDAwMDAwMDAwMDB9fQ=="
+        }
+      ]
+    },
+    {
+      "module": "module.demo_app",
+      "mode": "managed",
+      "type": "kubernetes_secret",
+      "name": "app_secret",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "binary_data": null,
+            "binary_data_wo": null,
+            "binary_data_wo_revision": null,
+            "data": {
+              "DB_PASSWORD": "dev-password",
+              "DB_USER": "admin"
+            },
+            "data_wo": null,
+            "data_wo_revision": null,
+            "id": "dev/demo-app-secret",
+            "immutable": false,
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 0,
+                "labels": {
+                  "app": "demo-app",
+                  "environment": "dev",
+                  "managed-by": "terraform"
+                },
+                "name": "demo-app-secret",
+                "namespace": "dev",
+                "resource_version": "193850",
+                "uid": "a1b577a8-3aac-4644-91e8-9e1e2cc2a7ec"
+              }
+            ],
+            "timeouts": null,
+            "type": "Opaque",
+            "wait_for_service_account_token": true
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "binary_data"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "data"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "data"
+              },
+              {
+                "type": "index",
+                "value": {
+                  "value": "DB_PASSWORD",
+                  "type": "string"
+                }
+              }
+            ]
+          ],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "Secret",
+            "name": "demo-app-secret",
+            "namespace": "dev"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMH19"
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

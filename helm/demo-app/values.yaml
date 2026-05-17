@@ -1,0 +1,35 @@
+replicaCount: 2
+
+image:
+  repository: demo-app
+  tag: v1
+  pullPolicy: Never
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 80
+
+appConfig:
+  APP_ENV: dev
+  LOG_LEVEL: debug
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+
+readinessProbe:
+  enabled: true
+  path: /
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+livenessProbe:
+  enabled: true
+  path: /
+  initialDelaySeconds: 15
+  periodSeconds: 20

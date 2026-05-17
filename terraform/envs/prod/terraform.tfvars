@@ -1,0 +1,13 @@
+environment       = "prod"
+app_name          = "demo-app"
+app_env           = "prod"
+log_level         = "warn"
+image_repository  = "demo-app"
+image_tag         = "tf-v1"
+image_pull_policy = "Never"
+replica_count     =3 
+service_type      = "NodePort"
+service_port      = 80
+container_port    = 80
+db_user           = "admin"
+db_password       = "prod-password"

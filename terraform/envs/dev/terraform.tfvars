@@ -1,0 +1,13 @@
+environment       = "dev"
+app_name          = "demo-app"
+app_env           = "dev"
+log_level         = "debug"
+image_repository  = "demo-app"
+image_tag         = "tf-v2"
+image_pull_policy = "Never"
+replica_count     = 1
+service_type      = "NodePort"
+service_port      = 80
+container_port    = 80
+db_user           = "admin"
+db_password       = "dev-password"

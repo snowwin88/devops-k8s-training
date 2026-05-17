@@ -1,0 +1,12 @@
+# Terraform local files
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.backup
+crash.log
+
+# macOS
+.DS_Store
+
+# Logs/temp
+*.log
+*.tmp
