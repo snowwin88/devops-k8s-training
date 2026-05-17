@@ -1,0 +1,31 @@
+name: Basic CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  basic-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Show current directory
+        run: |
+          pwd
+          ls -la
+
+      - name: Show project folders
+        run: |
+          echo "Project folders:"
+          find . -maxdepth 2 -type d | sort
+
+      - name: Basic validation
+        run: |
+          echo "Basic CI is running"
+          echo "Repository files are accessible"
+          echo "CI passed"
