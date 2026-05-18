@@ -34,7 +34,6 @@ jobs:
           - terraform/envs/dev
           - terraform/envs/stage
           - terraform/envs/prod
-          - terraform/envs/helm-dev
 
     defaults:
       run:
