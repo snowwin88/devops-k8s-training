@@ -1,28 +1,121 @@
 pipeline {
     agent any
+
+    parameters {
+        string(name: 'IMAGE_TAG', defaultValue: 'jenkins-v1', description: 'Image tag to deploy')
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'stage', 'prod'], description: 'Target environment')
+    }
+
     environment {
-        IMAGE_NAME = 'demo-app'
-        IMAGE_TAG = 'jenkins-v1'
         PATH = "/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
+        IMAGE_NAME = 'demo-app'
+        RELEASE_NAME = "demo-app-${params.ENVIRONMENT}"
     }
 
     stages {
         stage('Show Workspace') {
             steps {
                 sh '''
+                echo "Workspace:"
                 pwd
+                echo "Files:"
                 ls -la
                 '''
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Check Local Tools') {
             steps {
                 sh '''
-                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./app
-                docker images | grep ${IMAGE_NAME}
+                docker version
+                minikube status
+                kubectl config current-context
+                kubectl get nodes
+                helm version
                 '''
             }
+        }
+
+        stage('Build Image Inside Minikube') {
+            steps {
+                sh '''
+                minikube image build -t ${IMAGE_NAME}:${IMAGE_TAG} ./app
+                minikube image ls | grep ${IMAGE_NAME} || true
+                '''
+            }
+        }
+
+        stage('Helm Lint') {
+            steps {
+                sh '''
+                helm lint helm/demo-app
+                '''
+            }
+        }
+
+        stage('Render Helm Template') {
+            steps {
+                sh '''
+                helm template ${RELEASE_NAME} helm/demo-app \
+                  -f helm/demo-app/values/values-${ENVIRONMENT}.yaml \
+                  --set image.tag=${IMAGE_TAG} > /tmp/${RELEASE_NAME}-rendered.yaml
+
+                echo "Rendered manifest preview:"
+                head -50 /tmp/${RELEASE_NAME}-rendered.yaml
+                '''
+            }
+        }
+
+        stage('Deploy with Helm') {
+            steps {
+                sh '''
+                helm upgrade --install ${RELEASE_NAME} helm/demo-app \
+                  -n ${ENVIRONMENT} \
+                  --create-namespace \
+                  -f helm/demo-app/values/values-${ENVIRONMENT}.yaml \
+                  --set image.tag=${IMAGE_TAG}
+                '''
+            }
+        }
+
+        stage('Verify Helm Release') {
+            steps {
+                sh '''
+                helm list -n ${ENVIRONMENT}
+                helm status ${RELEASE_NAME} -n ${ENVIRONMENT}
+                helm history ${RELEASE_NAME} -n ${ENVIRONMENT}
+                '''
+            }
+        }
+
+        stage('Verify Kubernetes Resources') {
+            steps {
+                sh '''
+                kubectl get all -n ${ENVIRONMENT}
+                kubectl get pods -n ${ENVIRONMENT} -o wide
+                kubectl get svc -n ${ENVIRONMENT}
+                '''
+            }
+        }
+
+        stage('Verify Rollout') {
+            steps {
+                sh '''
+                DEPLOYMENT_NAME=$(kubectl get deploy -n ${ENVIRONMENT} -o jsonpath='{.items[0].metadata.name}')
+                echo "Deployment name: $DEPLOYMENT_NAME"
+                kubectl rollout status deployment/$DEPLOYMENT_NAME -n ${ENVIRONMENT} --timeout=120s
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Jenkins deployment succeeded."
+        }
+
+        failure {
+            echo "Jenkins deployment failed. Check Console Output, Helm history, and kubectl describe/logs."
         }
     }
 }
