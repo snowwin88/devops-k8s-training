@@ -1,29 +1,26 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'demo-app'
+        IMAGE_TAG = 'jenkins-v1'
+    }
+
     stages {
         stage('Show Workspace') {
             steps {
                 sh '''
-                echo "Current workspace:"
                 pwd
-
-                echo "Files:"
                 ls -la
-
-                echo "Project folders:"
-                find . -maxdepth 2 -type d | sort
                 '''
             }
         }
 
-        stage('Basic Validation') {
+        stage('Build Docker Image') {
             steps {
                 sh '''
-                test -d app
-                test -d helm
-                test -d terraform
-                echo "Required folders exist."
+                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./app
+                docker images | grep ${IMAGE_NAME}
                 '''
             }
         }
