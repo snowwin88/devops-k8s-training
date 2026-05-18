@@ -2,12 +2,17 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout Info') {
+        stage('Show Workspace') {
             steps {
-                echo 'Running Jenkinsfile from repository'
                 sh '''
+                echo "Current workspace:"
                 pwd
+
+                echo "Files:"
                 ls -la
+
+                echo "Project folders:"
+                find . -maxdepth 2 -type d | sort
                 '''
             }
         }
@@ -15,7 +20,10 @@ pipeline {
         stage('Basic Validation') {
             steps {
                 sh '''
-                echo "Basic validation passed"
+                test -d app
+                test -d helm
+                test -d terraform
+                echo "Required folders exist."
                 '''
             }
         }
