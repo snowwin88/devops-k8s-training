@@ -1,0 +1,60 @@
+name: Terraform Validate
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-validate.yml"
+  pull_request:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-validate.yml"
+
+jobs:
+  find-terraform-folders:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Show Terraform folders
+        run: |
+          find terraform -maxdepth 3 -type f -name "*.tf" | sort
+
+  terraform-validate:
+    runs-on: ubuntu-latest
+    needs: find-terraform-folders
+
+    strategy:
+      matrix:
+        env_dir:
+          - terraform/envs/dev
+          - terraform/envs/stage
+          - terraform/envs/prod
+          - terraform/envs/helm-dev
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.env_dir }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Show Terraform version
+        run: terraform version
+
+      - name: Terraform fmt check
+        run: terraform fmt -check
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform validate
+        run: terraform validate
