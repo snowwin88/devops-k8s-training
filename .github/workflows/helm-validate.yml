@@ -1,0 +1,51 @@
+name: Helm Validate
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "helm/**"
+      - ".github/workflows/helm-validate.yml"
+  pull_request:
+    paths:
+      - "helm/**"
+      - ".github/workflows/helm-validate.yml"
+
+jobs:
+  helm-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Show Helm version
+        run: |
+          helm version
+
+      - name: Show chart structure
+        run: |
+          find helm/demo-app -maxdepth 3 -type f | sort
+
+      - name: Lint Helm chart
+        run: |
+          helm lint helm/demo-app
+
+      - name: Render dev values
+        run: |
+          helm template demo-app-dev helm/demo-app \
+            -f helm/demo-app/values/values-dev.yaml
+
+      - name: Render stage values
+        run: |
+          helm template demo-app-stage helm/demo-app \
+            -f helm/demo-app/values/values-stage.yaml
+
+      - name: Render prod values
+        run: |
+          helm template demo-app-prod helm/demo-app \
+            -f helm/demo-app/values/values-prod.yaml
