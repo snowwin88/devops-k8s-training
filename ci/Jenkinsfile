@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Info') {
+            steps {
+                echo 'Running Jenkinsfile from repository'
+                sh '''
+                pwd
+                ls -la
+                '''
+            }
+        }
+
+        stage('Basic Validation') {
+            steps {
+                sh '''
+                echo "Basic validation passed"
+                '''
+            }
+        }
+    }
+}
