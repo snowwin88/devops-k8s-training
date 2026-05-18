@@ -1,11 +1,9 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
-    }
-    environment {
         IMAGE_NAME = 'demo-app'
         IMAGE_TAG = 'jenkins-v1'
+        PATH = "/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
     }
 
     stages {
