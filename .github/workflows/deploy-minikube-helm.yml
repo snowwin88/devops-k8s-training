@@ -1,0 +1,72 @@
+name: Deploy to Local Minikube with Helm
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to deploy, for example gha-v1"
+        required: true
+        default: "gha-v1"
+      environment:
+        description: "Target environment: dev, stage, or prod"
+        required: true
+        default: "dev"
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Check local tools and cluster
+        run: |
+          echo "Checking local tools..."
+          docker version
+          minikube status
+          kubectl config current-context
+          kubectl get nodes
+          helm version
+
+      - name: Build image inside Minikube
+        run: |
+          echo "Building image demo-app:${{ github.event.inputs.image_tag }}"
+          minikube image build -t demo-app:${{ github.event.inputs.image_tag }} ./app
+          echo "Image list:"
+          minikube image ls | grep demo-app || true
+
+      - name: Validate Helm chart before deploy
+        run: |
+          helm lint helm/demo-app
+          helm template demo-app-${{ github.event.inputs.environment }} helm/demo-app \
+            -f helm/demo-app/values/values-${{ github.event.inputs.environment }}.yaml \
+            --set image.tag=${{ github.event.inputs.image_tag }} > /tmp/rendered-demo-app.yaml
+          echo "Rendered manifest preview:"
+          head -50 /tmp/rendered-demo-app.yaml
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install demo-app-${{ github.event.inputs.environment }} helm/demo-app \
+            -n ${{ github.event.inputs.environment }} \
+            --create-namespace \
+            -f helm/demo-app/values/values-${{ github.event.inputs.environment }}.yaml \
+            --set image.tag=${{ github.event.inputs.image_tag }}
+
+      - name: Show Helm release
+        run: |
+          helm list -n ${{ github.event.inputs.environment }}
+          helm status demo-app-${{ github.event.inputs.environment }} -n ${{ github.event.inputs.environment }}
+          helm history demo-app-${{ github.event.inputs.environment }} -n ${{ github.event.inputs.environment }}
+
+      - name: Show Kubernetes resources
+        run: |
+          kubectl get all -n ${{ github.event.inputs.environment }}
+          kubectl get pods -n ${{ github.event.inputs.environment }} -o wide
+          kubectl get svc -n ${{ github.event.inputs.environment }}
+
+      - name: Verify rollout
+        run: |
+          DEPLOYMENT_NAME=$(kubectl get deploy -n ${{ github.event.inputs.environment }} -o jsonpath='{.items[0].metadata.name}')
+          echo "Deployment name: $DEPLOYMENT_NAME"
+          kubectl rollout status deployment/$DEPLOYMENT_NAME -n ${{ github.event.inputs.environment }} --timeout=120s
