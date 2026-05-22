@@ -1,8 +1,6 @@
+# DevOps Kubernetes and AWS Training Lab
 
-````markdown
-# DevOps Kubernetes Training Lab
-
-This repository documents my hands-on DevOps training lab using Docker Desktop, Minikube, Kubernetes, Helm, Terraform, GitHub Actions, and Jenkins.
+This repository documents my hands-on DevOps training lab using Docker Desktop, Minikube, Kubernetes, Helm, Terraform, GitHub Actions, Jenkins, AWS, EKS, ECR, CloudWatch, and automation scripts.
 
 The purpose of this project is to practice real-world DevOps responsibilities, including:
 
@@ -12,6 +10,47 @@ The purpose of this project is to practice real-world DevOps responsibilities, i
 - CI/CD automation with GitHub Actions and Jenkins
 - Local Kubernetes operations and troubleshooting
 - Multi-environment deployment using dev/stage/prod patterns
+- AWS infrastructure provisioning, monitoring, incident response, and cost cleanup
+
+## Contents
+
+### Local Kubernetes, Terraform, and CI/CD
+
+- [1. Training Environment](#1-training-environment)
+- [2. Docker and Minikube Setup](#2-docker-and-minikube-setup)
+- [3. Simple Application Creation](#3-simple-application-creation)
+- [4. Kubernetes Raw YAML Deployment](#4-kubernetes-raw-yaml-deployment)
+- [5. Helm Training](#5-helm-training)
+- [6. Docker Desktop Service Migration Practice](#6-docker-desktop-service-migration-practice)
+- [7. Terraform Deep DevOps Training](#7-terraform-deep-devops-training)
+- [8. GitHub Actions CI/CD Training](#8-github-actions-cicd-training)
+- [9. Jenkins CI/CD Training](#9-jenkins-cicd-training)
+- [10. Kubernetes Troubleshooting Skills Practiced](#10-kubernetes-troubleshooting-skills-practiced)
+- [11. Overall Skills Completed](#11-overall-skills-completed)
+- [12. Current Training Status](#12-current-training-status)
+- [13. Next Planned Training Items](#13-next-planned-training-items)
+- [14. Resume-Ready Project Summary](#14-resume-ready-project-summary)
+
+### AWS DevOps and Cloud Operations
+
+- [15. AWS DevOps Training Overview](#15-aws-devops-training-overview)
+- [16. AWS Account, IAM, SSO, and CLI Setup](#16-aws-account-iam-sso-and-cli-setup)
+- [17. EC2 Basic Operations and Troubleshooting](#17-ec2-basic-operations-and-troubleshooting)
+- [18. S3 Basic Operations](#18-s3-basic-operations)
+- [19. Terraform Infrastructure as Code](#19-terraform-infrastructure-as-code)
+- [20. Terraform Remote State](#20-terraform-remote-state)
+- [21. Terraform Modules](#21-terraform-modules)
+- [22. Terraform Multi-Environment Structure](#22-terraform-multi-environment-structure)
+- [23. CloudWatch Monitoring and SNS Alerts](#23-cloudwatch-monitoring-and-sns-alerts)
+- [24. ECR Docker Image Registry](#24-ecr-docker-image-registry)
+- [25. GitHub Actions to AWS ECR CI/CD](#25-github-actions-to-aws-ecr-cicd)
+- [26. EKS Basic Kubernetes Practice](#26-eks-basic-kubernetes-practice)
+- [27. ALB and Auto Scaling Group](#27-alb-and-auto-scaling-group)
+- [28. Bash and Python AWS Automation Scripts](#28-bash-and-python-aws-automation-scripts)
+- [29. Incident Response and Post-Mortem Documentation](#29-incident-response-and-post-mortem-documentation)
+- [30. Cost Control and Cleanup](#30-cost-control-and-cleanup)
+- [31. Final Skills Summary](#31-final-skills-summary)
+- [32. AWS Project Summary](#32-aws-project-summary)
 
 ---
 
@@ -40,7 +79,7 @@ Project root:
 
 ```bash
 ~/devops-k8s-training
-````
+```
 
 Main project structure:
 
@@ -98,10 +137,10 @@ kubectl get pods -A
 
 ### What I learned
 
-* Docker Desktop provides the local container runtime.
-* Minikube creates a local Kubernetes cluster for hands-on learning.
-* Local images need to be built inside Minikube when using `imagePullPolicy: Never`.
-* `kubectl` communicates with the current Kubernetes context, which should be `minikube`.
+- Docker Desktop provides the local container runtime.
+- Minikube creates a local Kubernetes cluster for hands-on learning.
+- Local images need to be built inside Minikube when using `imagePullPolicy: Never`.
+- `kubectl` communicates with the current Kubernetes context, which should be `minikube`.
 
 ---
 
@@ -147,9 +186,9 @@ minikube image ls | grep demo-app
 
 ### What I learned
 
-* A Dockerfile defines how to package an application into a container image.
-* Minikube must have access to the image before Kubernetes can run it.
-* Image tags are used to identify application versions.
+- A Dockerfile defines how to package an application into a container image.
+- Minikube must have access to the image before Kubernetes can run it.
+- Image tags are used to identify application versions.
 
 ---
 
@@ -214,11 +253,11 @@ kubectl rollout status deployment/demo-app -n dev
 
 ### What I learned
 
-* Raw Kubernetes YAML helps understand how Kubernetes resources work.
-* Deployments manage desired state and self-healing.
-* Services route traffic to Pods using label selectors.
-* Rollout and rollback are core Kubernetes operations.
-* `kubectl describe`, `kubectl logs`, and `kubectl get events` are essential troubleshooting commands.
+- Raw Kubernetes YAML helps understand how Kubernetes resources work.
+- Deployments manage desired state and self-healing.
+- Services route traffic to Pods using label selectors.
+- Rollout and rollback are core Kubernetes operations.
+- `kubectl describe`, `kubectl logs`, and `kubectl get events` are essential troubleshooting commands.
 
 ---
 
@@ -324,12 +363,12 @@ helm install demo-app-prod helm/demo-app \
 
 ### What I learned
 
-* Helm turns Kubernetes YAML into reusable templates.
-* `values.yaml` allows different settings for different environments.
-* `helm upgrade --install` is commonly used in CI/CD.
-* Helm tracks release history.
-* Helm rollback should be used when the app was deployed by Helm.
-* `helm lint` and `helm template` are useful for validation before deployment.
+- Helm turns Kubernetes YAML into reusable templates.
+- `values.yaml` allows different settings for different environments.
+- `helm upgrade --install` is commonly used in CI/CD.
+- Helm tracks release history.
+- Helm rollback should be used when the app was deployed by Helm.
+- `helm lint` and `helm template` are useful for validation before deployment.
 
 ---
 
@@ -363,11 +402,11 @@ docker volume ls
 
 ### What I learned
 
-* Docker containers are not directly “moved” into Kubernetes.
-* Services are converted into Kubernetes resources.
-* Stateless services are easier to migrate.
-* Stateful services need PVCs and careful backup planning.
-* Kubernetes Services provide DNS-based service discovery.
+- Docker containers are not directly “moved” into Kubernetes.
+- Services are converted into Kubernetes resources.
+- Stateless services are easier to migrate.
+- Stateful services need PVCs and careful backup planning.
+- Kubernetes Services provide DNS-based service discovery.
 
 ---
 
@@ -474,15 +513,15 @@ terraform apply
 
 ### What I learned
 
-* Terraform manages desired infrastructure state.
-* Manual changes can cause drift.
-* `terraform plan` is the review step before applying changes.
-* `terraform apply` reconciles real infrastructure with Terraform code.
-* Terraform state is critical and should not be committed to Git.
-* Variables and `terraform.tfvars` support environment-specific configuration.
-* Outputs are useful for exposing created resource names and values.
-* Modules prevent copy-pasting Terraform code.
-* Terraform can also manage Helm releases using `helm_release`.
+- Terraform manages desired infrastructure state.
+- Manual changes can cause drift.
+- `terraform plan` is the review step before applying changes.
+- `terraform apply` reconciles real infrastructure with Terraform code.
+- Terraform state is critical and should not be committed to Git.
+- Variables and `terraform.tfvars` support environment-specific configuration.
+- Outputs are useful for exposing created resource names and values.
+- Modules prevent copy-pasting Terraform code.
+- Terraform can also manage Helm releases using `helm_release`.
 
 ---
 
@@ -625,13 +664,13 @@ kubectl rollout status deployment/<deployment-name> -n dev
 
 ### What I learned
 
-* GitHub Actions can automate CI/CD from GitHub.
-* Workflows are stored as YAML.
-* Docker, Helm, and Terraform validation can run automatically.
-* Local Minikube deployment requires a self-hosted runner.
-* `helm upgrade --install` is useful for deployment pipelines.
-* CI/CD should validate before deployment.
-* Deployment verification should include Helm status and Kubernetes rollout checks.
+- GitHub Actions can automate CI/CD from GitHub.
+- Workflows are stored as YAML.
+- Docker, Helm, and Terraform validation can run automatically.
+- Local Minikube deployment requires a self-hosted runner.
+- `helm upgrade --install` is useful for deployment pipelines.
+- CI/CD should validate before deployment.
+- Deployment verification should include Helm status and Kubernetes rollout checks.
 
 ---
 
@@ -911,14 +950,14 @@ sh 'ls -la ~/.kube || true'
 
 ### What I learned
 
-* Jenkins can be used as a CI/CD automation server.
-* Jenkins Pipeline can be written as code using a Jenkinsfile.
-* Jenkins can run shell commands on my Mac.
-* Jenkins can build images inside Minikube.
-* Jenkins can deploy Helm releases to Minikube.
-* Parameters allow the same pipeline to deploy different image tags and environments.
-* Console Output is the main troubleshooting place.
-* Jenkins CI/CD is similar in purpose to GitHub Actions, but uses Jenkins jobs and Jenkinsfiles.
+- Jenkins can be used as a CI/CD automation server.
+- Jenkins Pipeline can be written as code using a Jenkinsfile.
+- Jenkins can run shell commands on my Mac.
+- Jenkins can build images inside Minikube.
+- Jenkins can deploy Helm releases to Minikube.
+- Parameters allow the same pipeline to deploy different image tags and environments.
+- Console Output is the main troubleshooting place.
+- Jenkins CI/CD is similar in purpose to GitHub Actions, but uses Jenkins jobs and Jenkinsfiles.
 
 ---
 
@@ -955,73 +994,74 @@ Common issues studied:
 
 ### Kubernetes
 
-* Created namespaces
-* Deployed app using raw YAML
-* Used Deployment, Service, ConfigMap
-* Used probes and resource limits
-* Performed rollout and rollback
-* Used `kubectl` for troubleshooting
+- Created namespaces
+- Deployed app using raw YAML
+- Used Deployment, Service, ConfigMap
+- Used probes and resource limits
+- Performed rollout and rollback
+- Used `kubectl` for troubleshooting
 
 ### Helm
 
-* Created Helm chart
-* Used templates
-* Used `values.yaml`
-* Created dev/stage/prod values
-* Installed, upgraded, rolled back, and uninstalled releases
-* Validated charts with `helm lint` and `helm template`
+- Created Helm chart
+- Used templates
+- Used `values.yaml`
+- Created dev/stage/prod values
+- Installed, upgraded, rolled back, and uninstalled releases
+- Validated charts with `helm lint` and `helm template`
 
 ### Terraform
 
-* Used providers
-* Created Kubernetes resources
-* Used variables and tfvars
-* Used outputs
-* Inspected state
-* Practiced drift detection
-* Used modules
-* Managed Helm release with Terraform
-* Practiced Terraform validation
+- Used providers
+- Created Kubernetes resources
+- Used variables and tfvars
+- Used outputs
+- Inspected state
+- Practiced drift detection
+- Used modules
+- Managed Helm release with Terraform
+- Practiced Terraform validation
 
 ### GitHub Actions
 
-* Created CI workflows
-* Built Docker image in CI
-* Validated Helm chart
-* Validated Terraform
-* Used self-hosted runner
-* Deployed to local Minikube with Helm
+- Created CI workflows
+- Built Docker image in CI
+- Validated Helm chart
+- Validated Terraform
+- Used self-hosted runner
+- Deployed to local Minikube with Helm
 
 ### Jenkins
 
-* Created Jenkins Pipeline jobs
-* Used Jenkinsfile
-* Checked tools from Jenkins
-* Built images
-* Validated Helm
-* Deployed to Minikube with Helm
-* Used parameters
-* Studied manual approval
-* Practiced troubleshooting
+- Created Jenkins Pipeline jobs
+- Used Jenkinsfile
+- Checked tools from Jenkins
+- Built images
+- Validated Helm
+- Deployed to Minikube with Helm
+- Used parameters
+- Studied manual approval
+- Practiced troubleshooting
 
 ---
 
 ## 12. Current Training Status
 
-| Area                              | Status                                        |
-| --------------------------------- | --------------------------------------------- |
-| Docker Desktop                    | Completed                                     |
-| Minikube                          | Completed                                     |
-| Kubernetes raw YAML               | Completed                                     |
-| Helm                              | Completed                                     |
-| Terraform                         | Completed                                     |
-| GitHub Actions CI/CD              | Completed through Helm deployment to Minikube |
-| Jenkins CI/CD                     | Completed                                     |
-| GitLab CI                         | Planned                                       |
-| Monitoring                        | Planned                                       |
-| Incident response and post-mortem | Planned                                       |
-| Argo CD + GitOps                  | Planned                                       |
-| AWS/EKS extension                 | Planned                                       |
+| Area                              | Status                                                   |
+| --------------------------------- | -------------------------------------------------------- |
+| Docker Desktop                    | Completed                                                |
+| Minikube                          | Completed                                                |
+| Kubernetes raw YAML               | Completed                                                |
+| Helm                              | Completed                                                |
+| Terraform                         | Completed for Kubernetes and AWS labs                    |
+| GitHub Actions CI/CD              | Completed for Minikube Helm deployment and AWS ECR push  |
+| Jenkins CI/CD                     | Completed                                                |
+| AWS infrastructure practice       | Completed for IAM, EC2, S3, VPC, ALB, ASG, ECR, and EKS |
+| Monitoring                        | Completed with CloudWatch and SNS; Prometheus planned    |
+| Incident response and post-mortem | Completed with documented practice incidents             |
+| Automation scripts                | Completed with Bash and Python AWS scripts               |
+| GitLab CI                         | Planned                                                  |
+| Argo CD + GitOps                  | Planned                                                  |
 
 ---
 
@@ -1032,11 +1072,10 @@ Future training items:
 ```text
 1. GitLab CI/CD
 2. Monitoring with metrics-server, Prometheus, and Grafana
-3. Incident response and post-mortem practice
-4. Argo CD + Helm GitOps
-5. AWS EKS deployment
-6. Terraform AWS provider for VPC, IAM, EKS, S3
-7. CI/CD deployment to AWS/EKS
+3. Argo CD + Helm GitOps
+4. Production-style EKS deployment workflow
+5. Terraform AWS provider expansion for EKS modules and CI/CD
+6. CI/CD deployment from GitHub Actions or Jenkins to AWS/EKS
 ```
 
 ---
@@ -1057,12 +1096,9 @@ Designed and implemented a local DevOps CI/CD training lab using Docker Desktop,
 Built an end-to-end local Kubernetes DevOps platform using Minikube, Helm, Terraform, GitHub Actions, and Jenkins. Automated Docker image builds, Helm chart validation, Terraform validation, and Helm-based deployments to dev/stage/prod namespaces. Practiced Infrastructure as Code, CI/CD pipeline design, Kubernetes troubleshooting, rollout verification, and release rollback workflows.
 ```
 
-```
-```
-````markdown
-# AWS DevOps Hands-on Training Summary
+---
 
-## Overview
+## 15. AWS DevOps Training Overview
 
 This training project was created to strengthen practical AWS infrastructure, DevOps, Kubernetes, Terraform, CI/CD, monitoring, automation, cost control, and incident response skills.
 
@@ -1080,7 +1116,7 @@ The hands-on labs focused on:
 
 ---
 
-## 1. AWS Account, IAM, SSO, and CLI Setup
+## 16. AWS Account, IAM, SSO, and CLI Setup
 
 ### What I practiced
 
@@ -1102,28 +1138,28 @@ aws configure set region us-east-2 --profile devops-admin
 aws ec2 describe-instances \
   --region us-east-2 \
   --profile devops-admin
-````
+```
 
 ### What I learned
 
-* Root user should not be used for daily operations
-* SSO / IAM Identity Center provides safer temporary credentials
-* AWS CLI commands are region-scoped for regional services like EC2
-* If AWS CLI cannot find a resource, region mismatch is one of the first things to check
+- Root user should not be used for daily operations
+- SSO / IAM Identity Center provides safer temporary credentials
+- AWS CLI commands are region-scoped for regional services like EC2
+- If AWS CLI cannot find a resource, region mismatch is one of the first things to check
 
 ---
 
-## 2. EC2 Basic Operations and Troubleshooting
+## 17. EC2 Basic Operations and Troubleshooting
 
 ### What I practiced
 
-* Launched EC2 instances
-* Connected to EC2 using SSH key pair
-* Installed and started Nginx on Amazon Linux 2023
-* Verified service locally using `curl localhost`
-* Troubleshot public access issues from my laptop
-* Checked EC2 public IP, private IP, subnet, VPC, and security group
-* Fixed HTTP access by updating Security Group inbound rules
+- Launched EC2 instances
+- Connected to EC2 using SSH key pair
+- Installed and started Nginx on Amazon Linux 2023
+- Verified service locally using `curl localhost`
+- Troubleshot public access issues from my laptop
+- Checked EC2 public IP, private IP, subnet, VPC, and security group
+- Fixed HTTP access by updating Security Group inbound rules
 
 ### Commands practiced
 
@@ -1154,22 +1190,22 @@ aws ec2 authorize-security-group-ingress \
 
 ### What I learned
 
-* If `curl localhost` works inside EC2 but public access fails, the application is running but network access is blocked
-* Common causes include Security Group, subnet route table, public IP, NACL, or OS firewall
-* Security Group inbound rules control whether external users can access EC2 ports
-* EC2 public IP can change after stop/start unless Elastic IP is used
+- If `curl localhost` works inside EC2 but public access fails, the application is running but network access is blocked
+- Common causes include Security Group, subnet route table, public IP, NACL, or OS firewall
+- Security Group inbound rules control whether external users can access EC2 ports
+- EC2 public IP can change after stop/start unless Elastic IP is used
 
 ---
 
-## 3. S3 Basic Operations
+## 18. S3 Basic Operations
 
 ### What I practiced
 
-* Created S3 buckets
-* Uploaded and downloaded objects
-* Enabled versioning and encryption
-* Blocked public access
-* Deleted objects and buckets safely
+- Created S3 buckets
+- Uploaded and downloaded objects
+- Enabled versioning and encryption
+- Blocked public access
+- Deleted objects and buckets safely
 
 ### Commands practiced
 
@@ -1189,24 +1225,24 @@ aws s3 rb s3://<bucket-name> --profile devops-admin
 
 ### What I learned
 
-* S3 is object storage, not a traditional file system
-* Bucket names must be globally unique
-* Versioning and encryption are important production best practices
-* Public access should be blocked unless there is a clear business reason
+- S3 is object storage, not a traditional file system
+- Bucket names must be globally unique
+- Versioning and encryption are important production best practices
+- Public access should be blocked unless there is a clear business reason
 
 ---
 
-## 4. Terraform Infrastructure as Code
+## 19. Terraform Infrastructure as Code
 
 ### What I practiced
 
-* Installed and used Terraform
-* Created S3 bucket using Terraform
-* Created EC2 instance using Terraform
-* Created VPC, subnet, Internet Gateway, route table, security group, and EC2 using Terraform
-* Used `provider.tf`, `main.tf`, `variables.tf`, `outputs.tf`, and `data.tf`
-* Fixed Terraform EC2 creation failure caused by missing default subnet
-* Practiced explicit VPC and subnet configuration instead of relying on default VPC
+- Installed and used Terraform
+- Created S3 bucket using Terraform
+- Created EC2 instance using Terraform
+- Created VPC, subnet, Internet Gateway, route table, security group, and EC2 using Terraform
+- Used `provider.tf`, `main.tf`, `variables.tf`, `outputs.tf`, and `data.tf`
+- Fixed Terraform EC2 creation failure caused by missing default subnet
+- Practiced explicit VPC and subnet configuration instead of relying on default VPC
 
 ### Commands practiced
 
@@ -1223,24 +1259,24 @@ terraform destroy
 
 ### What I learned
 
-* Terraform code describes desired infrastructure
-* Terraform state tracks real AWS resources managed by Terraform
-* `terraform plan` previews infrastructure changes before applying
-* `terraform apply` creates or updates infrastructure
-* `terraform destroy` deletes resources managed by Terraform
-* Production-style Terraform should explicitly define or reference VPC and subnet resources
-* Relying on default VPC/default subnet can cause errors
+- Terraform code describes desired infrastructure
+- Terraform state tracks real AWS resources managed by Terraform
+- `terraform plan` previews infrastructure changes before applying
+- `terraform apply` creates or updates infrastructure
+- `terraform destroy` deletes resources managed by Terraform
+- Production-style Terraform should explicitly define or reference VPC and subnet resources
+- Relying on default VPC/default subnet can cause errors
 
 ---
 
-## 5. Terraform Remote State
+## 20. Terraform Remote State
 
 ### What I practiced
 
-* Created an S3 bucket for Terraform remote state
-* Enabled versioning, encryption, and public access block on the state bucket
-* Configured Terraform S3 backend
-* Verified Terraform state was stored in S3 instead of local-only state
+- Created an S3 bucket for Terraform remote state
+- Enabled versioning, encryption, and public access block on the state bucket
+- Configured Terraform S3 backend
+- Verified Terraform state was stored in S3 instead of local-only state
 
 ### Commands practiced
 
@@ -1265,21 +1301,21 @@ aws s3 ls s3://<terraform-state-bucket>/practice/05-remote-state/ \
 
 ### What I learned
 
-* Local Terraform state is okay for personal learning, but remote state is better for teams
-* S3 remote state allows multiple engineers or CI/CD pipelines to work from shared infrastructure state
-* Terraform state may contain sensitive infrastructure details, so it should not be committed to GitHub
-* GitHub stores Terraform source code, while S3 stores Terraform state
+- Local Terraform state is okay for personal learning, but remote state is better for teams
+- S3 remote state allows multiple engineers or CI/CD pipelines to work from shared infrastructure state
+- Terraform state may contain sensitive infrastructure details, so it should not be committed to GitHub
+- GitHub stores Terraform source code, while S3 stores Terraform state
 
 ---
 
-## 6. Terraform Modules
+## 21. Terraform Modules
 
 ### What I practiced
 
-* Created reusable Terraform modules
-* Built an S3 module with `main.tf`, `variables.tf`, and `outputs.tf`
-* Called the module from a root Terraform configuration
-* Reused the same module with different input values
+- Created reusable Terraform modules
+- Built an S3 module with `main.tf`, `variables.tf`, and `outputs.tf`
+- Called the module from a root Terraform configuration
+- Reused the same module with different input values
 
 ### Example structure practiced
 
@@ -1310,21 +1346,21 @@ terraform destroy
 
 ### What I learned
 
-* Modules help avoid copy/paste Terraform code
-* Modules should define reusable infrastructure logic
-* Root environment folders should usually own provider and backend configuration
-* Modules should not usually hardcode AWS region, profile, or backend settings
+- Modules help avoid copy/paste Terraform code
+- Modules should define reusable infrastructure logic
+- Root environment folders should usually own provider and backend configuration
+- Modules should not usually hardcode AWS region, profile, or backend settings
 
 ---
 
-## 7. Terraform Multi-Environment Structure
+## 22. Terraform Multi-Environment Structure
 
 ### What I practiced
 
-* Created separate Terraform environment folders for `dev` and `stage`
-* Used the same module for multiple environments
-* Used different bucket names and environment values for each environment
-* Practiced the idea of separate state per environment
+- Created separate Terraform environment folders for `dev` and `stage`
+- Used the same module for multiple environments
+- Used different bucket names and environment values for each environment
+- Practiced the idea of separate state per environment
 
 ### Example structure practiced
 
@@ -1363,22 +1399,22 @@ terraform destroy
 
 ### What I learned
 
-* Real teams usually separate dev, stage, and prod environments
-* The same module can be reused with different environment values
-* Each environment should have its own Terraform state
-* Environment separation reduces risk of accidentally changing production resources
+- Real teams usually separate dev, stage, and prod environments
+- The same module can be reused with different environment values
+- Each environment should have its own Terraform state
+- Environment separation reduces risk of accidentally changing production resources
 
 ---
 
-## 8. CloudWatch Monitoring and SNS Alerts
+## 23. CloudWatch Monitoring and SNS Alerts
 
 ### What I practiced
 
-* Created SNS topic for alert notification
-* Subscribed email to SNS topic
-* Created CloudWatch CPU alarm for EC2
-* Generated CPU load to test alarm behavior
-* Verified alarm state and email notification
+- Created SNS topic for alert notification
+- Subscribed email to SNS topic
+- Created CloudWatch CPU alarm for EC2
+- Generated CPU load to test alarm behavior
+- Verified alarm state and email notification
 
 ### Commands practiced
 
@@ -1414,23 +1450,23 @@ aws cloudwatch describe-alarms \
 
 ### What I learned
 
-* CloudWatch metrics help monitor infrastructure health
-* CloudWatch alarms detect abnormal conditions
-* SNS can send alarm notifications by email
-* Monitoring is critical for production operations and incident response
+- CloudWatch metrics help monitor infrastructure health
+- CloudWatch alarms detect abnormal conditions
+- SNS can send alarm notifications by email
+- Monitoring is critical for production operations and incident response
 
 ---
 
-## 9. ECR Docker Image Registry
+## 24. ECR Docker Image Registry
 
 ### What I practiced
 
-* Created Amazon ECR repository
-* Built a local Docker image
-* Logged Docker into ECR
-* Tagged image with ECR repository URI
-* Pushed image to ECR
-* Verified image existed in ECR
+- Created Amazon ECR repository
+- Built a local Docker image
+- Logged Docker into ECR
+- Tagged image with ECR repository URI
+- Pushed image to ECR
+- Verified image existed in ECR
 
 ### Commands practiced
 
@@ -1464,26 +1500,26 @@ aws ecr describe-images \
 
 ### What I learned
 
-* ECR stores Docker images
-* GitHub stores source code, while ECR stores built container images
-* Docker images must be tagged with the full ECR repository URI before pushing
-* `${REPO_URI}:latest` is safer than `$REPO_URI:latest` in shell scripts
+- ECR stores Docker images
+- GitHub stores source code, while ECR stores built container images
+- Docker images must be tagged with the full ECR repository URI before pushing
+- `${REPO_URI}:latest` is safer than `$REPO_URI:latest` in shell scripts
 
 ---
 
-## 10. GitHub Actions to AWS ECR CI/CD
+## 25. GitHub Actions to AWS ECR CI/CD
 
 ### What I practiced
 
-* Created a standalone GitHub repo for `ecr-demo-app`
-* Created GitHub Actions workflow
-* Configured GitHub repository secrets
-* Created IAM user for beginner CI/CD lab
-* Attached ECR permissions to GitHub Actions IAM user
-* Built Docker image automatically on push to `main`
-* Logged in to ECR from GitHub Actions
-* Pushed Docker image to ECR
-* Verified image in ECR
+- Created a standalone GitHub repo for `ecr-demo-app`
+- Created GitHub Actions workflow
+- Configured GitHub repository secrets
+- Created IAM user for beginner CI/CD lab
+- Attached ECR permissions to GitHub Actions IAM user
+- Built Docker image automatically on push to `main`
+- Logged in to ECR from GitHub Actions
+- Pushed Docker image to ECR
+- Verified image in ECR
 
 ### Workflow practiced
 
@@ -1526,28 +1562,28 @@ aws iam attach-user-policy \
 
 ### What I learned
 
-* GitHub Actions can automate Docker build and push workflows
-* GitHub repository secrets store sensitive CI/CD credentials
-* IAM credentials authenticate the workflow, but IAM policies authorize what it can do
-* Missing `ecr:GetAuthorizationToken` causes ECR login failure
-* For production, GitHub OIDC is preferred over long-term IAM user access keys
+- GitHub Actions can automate Docker build and push workflows
+- GitHub repository secrets store sensitive CI/CD credentials
+- IAM credentials authenticate the workflow, but IAM policies authorize what it can do
+- Missing `ecr:GetAuthorizationToken` causes ECR login failure
+- For production, GitHub OIDC is preferred over long-term IAM user access keys
 
 ---
 
-## 11. EKS Basic Kubernetes Practice
+## 26. EKS Basic Kubernetes Practice
 
 ### What I practiced
 
-* Verified existing `kubectl` installation
-* Installed/used `eksctl`
-* Created an EKS cluster
-* Verified Kubernetes nodes and system pods
-* Deployed Nginx
-* Exposed Nginx using Kubernetes `Service type=LoadBalancer`
-* Checked pods, services, events, logs, and nodes
-* Scaled deployment replicas
-* Deleted a pod and observed Kubernetes self-healing
-* Cleaned up EKS cluster to avoid cost
+- Verified existing `kubectl` installation
+- Installed/used `eksctl`
+- Created an EKS cluster
+- Verified Kubernetes nodes and system pods
+- Deployed Nginx
+- Exposed Nginx using Kubernetes `Service type=LoadBalancer`
+- Checked pods, services, events, logs, and nodes
+- Scaled deployment replicas
+- Deleted a pod and observed Kubernetes self-healing
+- Cleaned up EKS cluster to avoid cost
 
 ### Commands practiced
 
@@ -1595,33 +1631,33 @@ eksctl delete cluster \
 
 ### What I learned
 
-* Minikube and EKS use the same core Kubernetes commands
-* `kubectl` uses kubeconfig context to decide whether it talks to Minikube or EKS
-* EKS maps local Kubernetes concepts to AWS-managed Kubernetes
-* `Service type=LoadBalancer` can create an AWS load balancer
-* Kubernetes Deployment maintains desired pod state
-* EKS resources should be deleted quickly after labs to avoid cost
+- Minikube and EKS use the same core Kubernetes commands
+- `kubectl` uses kubeconfig context to decide whether it talks to Minikube or EKS
+- EKS maps local Kubernetes concepts to AWS-managed Kubernetes
+- `Service type=LoadBalancer` can create an AWS load balancer
+- Kubernetes Deployment maintains desired pod state
+- EKS resources should be deleted quickly after labs to avoid cost
 
 ---
 
-## 12. ALB and Auto Scaling Group
+## 27. ALB and Auto Scaling Group
 
 ### What I practiced
 
-* Created second public subnet for ALB
-* Verified route table had `0.0.0.0/0 -> Internet Gateway`
-* Enabled public IP auto-assignment on subnet
-* Created ALB Security Group
-* Created EC2 Security Group allowing HTTP from ALB SG
-* Created Launch Template with Nginx user data
-* Created Target Group and health check
-* Created internet-facing Application Load Balancer
-* Created HTTP listener on port 80
-* Created Auto Scaling Group with desired capacity 2
-* Verified target health
-* Tested ALB DNS endpoint
-* Terminated one instance and observed ASG replacement
-* Troubleshot unhealthy target status
+- Created second public subnet for ALB
+- Verified route table had `0.0.0.0/0 -> Internet Gateway`
+- Enabled public IP auto-assignment on subnet
+- Created ALB Security Group
+- Created EC2 Security Group allowing HTTP from ALB SG
+- Created Launch Template with Nginx user data
+- Created Target Group and health check
+- Created internet-facing Application Load Balancer
+- Created HTTP listener on port 80
+- Created Auto Scaling Group with desired capacity 2
+- Verified target health
+- Tested ALB DNS endpoint
+- Terminated one instance and observed ASG replacement
+- Troubleshot unhealthy target status
 
 ### Commands practiced
 
@@ -1709,28 +1745,28 @@ aws elbv2 describe-target-health \
 
 ### What I learned
 
-* ALB requires at least two subnets in different Availability Zones
-* A public subnet needs a route to Internet Gateway
-* ALB Security Group should allow public HTTP
-* EC2 Security Group can allow HTTP only from ALB Security Group
-* Target Group health checks determine whether ALB sends traffic to an instance
-* Auto Scaling Group maintains desired capacity
-* `healthy`, `unhealthy`, and `draining` target states are important for troubleshooting
-* If one instance becomes unhealthy or terminated, ASG can launch a replacement
+- ALB requires at least two subnets in different Availability Zones
+- A public subnet needs a route to Internet Gateway
+- ALB Security Group should allow public HTTP
+- EC2 Security Group can allow HTTP only from ALB Security Group
+- Target Group health checks determine whether ALB sends traffic to an instance
+- Auto Scaling Group maintains desired capacity
+- `healthy`, `unhealthy`, and `draining` target states are important for troubleshooting
+- If one instance becomes unhealthy or terminated, ASG can launch a replacement
 
 ---
 
-## 13. Bash and Python AWS Automation Scripts
+## 28. Bash and Python AWS Automation Scripts
 
 ### What I practiced
 
-* Created Bash scripts for AWS inventory and cleanup checks
-* Created Python `boto3` scripts for EC2 inventory and security checks
-* Listed running EC2 instances
-* Audited Security Groups allowing public SSH
-* Found unattached EBS volumes
-* Listed ECR images
-* Checked cost-related resources such as EC2, EBS, ALB, and EKS
+- Created Bash scripts for AWS inventory and cleanup checks
+- Created Python `boto3` scripts for EC2 inventory and security checks
+- Listed running EC2 instances
+- Audited Security Groups allowing public SSH
+- Found unattached EBS volumes
+- Listed ECR images
+- Checked cost-related resources such as EC2, EBS, ALB, and EKS
 
 ### Scripts created
 
@@ -1768,22 +1804,22 @@ python3 find_unattached_volumes.py
 
 ### What I learned
 
-* Automation scripts reduce repetitive manual work
-* AWS CLI scripts are useful for quick operational checks
-* Python `boto3` scripts are useful for more flexible automation
-* Public SSH exposure can be audited automatically
-* Unattached EBS volumes can create unnecessary cost
-* Cost cleanup scripts help avoid forgotten resources after training labs
+- Automation scripts reduce repetitive manual work
+- AWS CLI scripts are useful for quick operational checks
+- Python `boto3` scripts are useful for more flexible automation
+- Public SSH exposure can be audited automatically
+- Unattached EBS volumes can create unnecessary cost
+- Cost cleanup scripts help avoid forgotten resources after training labs
 
 ---
 
-## 14. Incident Response and Post-Mortem Documentation
+## 29. Incident Response and Post-Mortem Documentation
 
 ### What I practiced
 
-* Documented real troubleshooting scenarios
-* Used incident response format with impact, detection, investigation, root cause, resolution, verification, and prevention
-* Converted hands-on issues into reusable post-mortem examples
+- Documented real troubleshooting scenarios
+- Used incident response format with impact, detection, investigation, root cause, resolution, verification, and prevention
+- Converted hands-on issues into reusable post-mortem examples
 
 ### Incidents documented
 
@@ -1805,23 +1841,23 @@ incidents/
 
 ### What I learned
 
-* Incident response is not only about fixing the issue; it is also about documenting what happened
-* Good post-mortems include impact, detection, timeline, root cause, resolution, verification, and prevention
-* Many production issues are caused by configuration errors, not application code
-* Troubleshooting should follow a structured flow: check symptoms, isolate layers, verify assumptions, fix, and document prevention actions
+- Incident response is not only about fixing the issue; it is also about documenting what happened
+- Good post-mortems include impact, detection, timeline, root cause, resolution, verification, and prevention
+- Many production issues are caused by configuration errors, not application code
+- Troubleshooting should follow a structured flow: check symptoms, isolate layers, verify assumptions, fix, and document prevention actions
 
 ---
 
-## 15. Cost Control and Cleanup
+## 30. Cost Control and Cleanup
 
 ### What I practiced
 
-* Deleted temporary EC2 instances
-* Destroyed Terraform-managed resources
-* Deleted EKS cluster after lab
-* Deleted ALB, Target Group, Launch Template, ASG, and Security Groups after testing
-* Checked for running EC2, unattached EBS volumes, Load Balancers, and EKS clusters
-* Used cleanup scripts to reduce surprise cost risk
+- Deleted temporary EC2 instances
+- Destroyed Terraform-managed resources
+- Deleted EKS cluster after lab
+- Deleted ALB, Target Group, Launch Template, ASG, and Security Groups after testing
+- Checked for running EC2, unattached EBS volumes, Load Balancers, and EKS clusters
+- Used cleanup scripts to reduce surprise cost risk
 
 ### Commands practiced
 
@@ -1861,40 +1897,36 @@ aws eks list-clusters \
 
 ### What I learned
 
-* Cloud resources can continue charging after labs if not cleaned up
-* EKS, ALB, NAT Gateway, EBS, and EC2 are important resources to check after practice
-* Cleanup is part of responsible DevOps operations
-* Cost awareness is part of production engineering
+- Cloud resources can continue charging after labs if not cleaned up
+- EKS, ALB, NAT Gateway, EBS, and EC2 are important resources to check after practice
+- Cleanup is part of responsible DevOps operations
+- Cost awareness is part of production engineering
 
 ---
 
-## 16. Final Skills Summary
+## 31. Final Skills Summary
 
 Through this training project, I practiced:
 
-* AWS IAM, SSO, and CLI usage
-* EC2 provisioning and troubleshooting
-* S3 bucket operations and security configuration
-* VPC, subnet, route table, Internet Gateway, and Security Group concepts
-* Terraform Infrastructure as Code
-* Terraform remote state with S3 backend
-* Terraform modules
-* Terraform multi-environment structure
-* CloudWatch alarms and SNS notifications
-* Docker image build and Amazon ECR push
-* GitHub Actions CI/CD pipeline to ECR
-* Kubernetes operations with Minikube and EKS
-* ALB, Target Group, Launch Template, and Auto Scaling Group
-* Bash and Python automation for AWS operations
-* Cost cleanup checks
-* Incident response and post-mortem documentation
+- AWS IAM, SSO, and CLI usage
+- EC2 provisioning and troubleshooting
+- S3 bucket operations and security configuration
+- VPC, subnet, route table, Internet Gateway, and Security Group concepts
+- Terraform Infrastructure as Code
+- Terraform remote state with S3 backend
+- Terraform modules
+- Terraform multi-environment structure
+- CloudWatch alarms and SNS notifications
+- Docker image build and Amazon ECR push
+- GitHub Actions CI/CD pipeline to ECR
+- Kubernetes operations with Minikube and EKS
+- ALB, Target Group, Launch Template, and Auto Scaling Group
+- Bash and Python automation for AWS operations
+- Cost cleanup checks
+- Incident response and post-mortem documentation
 
 ---
 
-## 17. Project Summary
+## 32. AWS Project Summary
 
 This project helped me build practical AWS and DevOps hands-on experience. I practiced provisioning and troubleshooting AWS infrastructure including EC2, S3, IAM, VPC, Security Groups, ALB, Auto Scaling, ECR, CloudWatch, and EKS. I also used Terraform to manage infrastructure as code, including remote state, modules, and multi-environment structure. For CI/CD, I built a GitHub Actions pipeline that builds a Docker image and pushes it to Amazon ECR. I also created Bash and Python automation scripts for inventory, security audit, and cost cleanup checks. Finally, I documented incident response scenarios such as blocked HTTP access, AWS region mismatch, Terraform subnet errors, ECR IAM permission issues, and ALB health check failures. This training gave me practical experience in infrastructure provisioning, monitoring, automation, CI/CD, Kubernetes, high availability, cost control, and incident response.
-
-```
-```
-
