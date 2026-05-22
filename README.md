@@ -1059,4 +1059,842 @@ Built an end-to-end local Kubernetes DevOps platform using Minikube, Helm, Terra
 
 ```
 ```
+````markdown
+# AWS DevOps Hands-on Training Summary
+
+## Overview
+
+This training project was created to strengthen practical AWS infrastructure, DevOps, Kubernetes, Terraform, CI/CD, monitoring, automation, cost control, and incident response skills.
+
+The hands-on labs focused on:
+
+- Building and supporting AWS-based infrastructure
+- Operating and troubleshooting Kubernetes clusters
+- Managing infrastructure using Terraform / Infrastructure as Code
+- Supporting CI/CD pipelines
+- Monitoring system health and performance
+- Improving cost visibility and cleanup practices
+- Writing Bash and Python automation scripts
+- Practicing incident response and post-mortem documentation
+- Understanding high availability with load balancing and auto scaling
+
+---
+
+## 1. AWS Account, IAM, SSO, and CLI Setup
+
+### What I practiced
+
+- Secured AWS account root user with MFA
+- Used IAM Identity Center / SSO for daily admin login
+- Configured AWS CLI profile `devops-admin`
+- Verified AWS identity and active region
+- Troubleshot region mismatch between CLI and actual AWS resources
+
+### Commands practiced
+
+```bash
+aws configure list --profile devops-admin
+
+aws sts get-caller-identity --profile devops-admin
+
+aws configure set region us-east-2 --profile devops-admin
+
+aws ec2 describe-instances \
+  --region us-east-2 \
+  --profile devops-admin
+````
+
+### What I learned
+
+* Root user should not be used for daily operations
+* SSO / IAM Identity Center provides safer temporary credentials
+* AWS CLI commands are region-scoped for regional services like EC2
+* If AWS CLI cannot find a resource, region mismatch is one of the first things to check
+
+---
+
+## 2. EC2 Basic Operations and Troubleshooting
+
+### What I practiced
+
+* Launched EC2 instances
+* Connected to EC2 using SSH key pair
+* Installed and started Nginx on Amazon Linux 2023
+* Verified service locally using `curl localhost`
+* Troubleshot public access issues from my laptop
+* Checked EC2 public IP, private IP, subnet, VPC, and security group
+* Fixed HTTP access by updating Security Group inbound rules
+
+### Commands practiced
+
+```bash
+ssh -i ~/.ssh/devops-practice-key.pem ec2-user@<public-ip>
+
+sudo dnf update -y
+sudo dnf install nginx -y
+sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx
+
+curl localhost
+
+aws ec2 describe-instances \
+  --filters "Name=ip-address,Values=<public-ip>" \
+  --query "Reservations[*].Instances[*].[InstanceId,State.Name,PublicIpAddress,PrivateIpAddress,SubnetId,VpcId,SecurityGroups[*].GroupId]" \
+  --output table \
+  --profile devops-admin
+
+aws ec2 authorize-security-group-ingress \
+  --group-id <sg-id> \
+  --protocol tcp \
+  --port 80 \
+  --cidr 0.0.0.0/0 \
+  --profile devops-admin
+```
+
+### What I learned
+
+* If `curl localhost` works inside EC2 but public access fails, the application is running but network access is blocked
+* Common causes include Security Group, subnet route table, public IP, NACL, or OS firewall
+* Security Group inbound rules control whether external users can access EC2 ports
+* EC2 public IP can change after stop/start unless Elastic IP is used
+
+---
+
+## 3. S3 Basic Operations
+
+### What I practiced
+
+* Created S3 buckets
+* Uploaded and downloaded objects
+* Enabled versioning and encryption
+* Blocked public access
+* Deleted objects and buckets safely
+
+### Commands practiced
+
+```bash
+aws s3 mb s3://<bucket-name> --region us-east-2 --profile devops-admin
+
+aws s3 cp hello.txt s3://<bucket-name>/ --profile devops-admin
+
+aws s3 ls s3://<bucket-name>/ --profile devops-admin
+
+aws s3 cp s3://<bucket-name>/hello.txt downloaded.txt --profile devops-admin
+
+aws s3 rm s3://<bucket-name>/hello.txt --profile devops-admin
+
+aws s3 rb s3://<bucket-name> --profile devops-admin
+```
+
+### What I learned
+
+* S3 is object storage, not a traditional file system
+* Bucket names must be globally unique
+* Versioning and encryption are important production best practices
+* Public access should be blocked unless there is a clear business reason
+
+---
+
+## 4. Terraform Infrastructure as Code
+
+### What I practiced
+
+* Installed and used Terraform
+* Created S3 bucket using Terraform
+* Created EC2 instance using Terraform
+* Created VPC, subnet, Internet Gateway, route table, security group, and EC2 using Terraform
+* Used `provider.tf`, `main.tf`, `variables.tf`, `outputs.tf`, and `data.tf`
+* Fixed Terraform EC2 creation failure caused by missing default subnet
+* Practiced explicit VPC and subnet configuration instead of relying on default VPC
+
+### Commands practiced
+
+```bash
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+terraform apply
+terraform output
+terraform state list
+terraform destroy
+```
+
+### What I learned
+
+* Terraform code describes desired infrastructure
+* Terraform state tracks real AWS resources managed by Terraform
+* `terraform plan` previews infrastructure changes before applying
+* `terraform apply` creates or updates infrastructure
+* `terraform destroy` deletes resources managed by Terraform
+* Production-style Terraform should explicitly define or reference VPC and subnet resources
+* Relying on default VPC/default subnet can cause errors
+
+---
+
+## 5. Terraform Remote State
+
+### What I practiced
+
+* Created an S3 bucket for Terraform remote state
+* Enabled versioning, encryption, and public access block on the state bucket
+* Configured Terraform S3 backend
+* Verified Terraform state was stored in S3 instead of local-only state
+
+### Commands practiced
+
+```bash
+aws s3api create-bucket \
+  --bucket <terraform-state-bucket> \
+  --region us-east-2 \
+  --create-bucket-configuration LocationConstraint=us-east-2 \
+  --profile devops-admin
+
+aws s3api put-bucket-versioning \
+  --bucket <terraform-state-bucket> \
+  --versioning-configuration Status=Enabled \
+  --profile devops-admin
+
+terraform init
+terraform apply
+
+aws s3 ls s3://<terraform-state-bucket>/practice/05-remote-state/ \
+  --profile devops-admin
+```
+
+### What I learned
+
+* Local Terraform state is okay for personal learning, but remote state is better for teams
+* S3 remote state allows multiple engineers or CI/CD pipelines to work from shared infrastructure state
+* Terraform state may contain sensitive infrastructure details, so it should not be committed to GitHub
+* GitHub stores Terraform source code, while S3 stores Terraform state
+
+---
+
+## 6. Terraform Modules
+
+### What I practiced
+
+* Created reusable Terraform modules
+* Built an S3 module with `main.tf`, `variables.tf`, and `outputs.tf`
+* Called the module from a root Terraform configuration
+* Reused the same module with different input values
+
+### Example structure practiced
+
+```text
+06-modules/
+  modules/
+    s3-basic/
+      main.tf
+      variables.tf
+      outputs.tf
+
+  live/
+    provider.tf
+    main.tf
+    outputs.tf
+```
+
+### Commands practiced
+
+```bash
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+terraform apply
+terraform destroy
+```
+
+### What I learned
+
+* Modules help avoid copy/paste Terraform code
+* Modules should define reusable infrastructure logic
+* Root environment folders should usually own provider and backend configuration
+* Modules should not usually hardcode AWS region, profile, or backend settings
+
+---
+
+## 7. Terraform Multi-Environment Structure
+
+### What I practiced
+
+* Created separate Terraform environment folders for `dev` and `stage`
+* Used the same module for multiple environments
+* Used different bucket names and environment values for each environment
+* Practiced the idea of separate state per environment
+
+### Example structure practiced
+
+```text
+07-multi-env/
+  modules/
+    s3-basic/
+
+  environments/
+    dev/
+      provider.tf
+      main.tf
+      outputs.tf
+
+    stage/
+      provider.tf
+      main.tf
+      outputs.tf
+```
+
+### Commands practiced
+
+```bash
+cd environments/dev
+terraform init
+terraform plan
+terraform apply
+
+cd ../stage
+terraform init
+terraform plan
+terraform apply
+
+terraform destroy
+```
+
+### What I learned
+
+* Real teams usually separate dev, stage, and prod environments
+* The same module can be reused with different environment values
+* Each environment should have its own Terraform state
+* Environment separation reduces risk of accidentally changing production resources
+
+---
+
+## 8. CloudWatch Monitoring and SNS Alerts
+
+### What I practiced
+
+* Created SNS topic for alert notification
+* Subscribed email to SNS topic
+* Created CloudWatch CPU alarm for EC2
+* Generated CPU load to test alarm behavior
+* Verified alarm state and email notification
+
+### Commands practiced
+
+```bash
+aws sns create-topic \
+  --name devops-practice-alerts \
+  --profile devops-admin
+
+aws sns subscribe \
+  --topic-arn <topic-arn> \
+  --protocol email \
+  --notification-endpoint <email> \
+  --profile devops-admin
+
+aws cloudwatch put-metric-alarm \
+  --alarm-name devops-practice-high-cpu \
+  --metric-name CPUUtilization \
+  --namespace AWS/EC2 \
+  --statistic Average \
+  --period 300 \
+  --threshold 70 \
+  --comparison-operator GreaterThanThreshold \
+  --dimensions Name=InstanceId,Value=<instance-id> \
+  --evaluation-periods 1 \
+  --alarm-actions <topic-arn> \
+  --unit Percent \
+  --profile devops-admin
+
+aws cloudwatch describe-alarms \
+  --alarm-names devops-practice-high-cpu \
+  --profile devops-admin
+```
+
+### What I learned
+
+* CloudWatch metrics help monitor infrastructure health
+* CloudWatch alarms detect abnormal conditions
+* SNS can send alarm notifications by email
+* Monitoring is critical for production operations and incident response
+
+---
+
+## 9. ECR Docker Image Registry
+
+### What I practiced
+
+* Created Amazon ECR repository
+* Built a local Docker image
+* Logged Docker into ECR
+* Tagged image with ECR repository URI
+* Pushed image to ECR
+* Verified image existed in ECR
+
+### Commands practiced
+
+```bash
+aws ecr create-repository \
+  --repository-name devops-demo-app \
+  --image-scanning-configuration scanOnPush=true \
+  --region us-east-2 \
+  --profile devops-admin
+
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile devops-admin)
+REGION=us-east-2
+REPO_URI=${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/devops-demo-app
+
+aws ecr get-login-password \
+  --region us-east-2 \
+  --profile devops-admin | \
+docker login \
+  --username AWS \
+  --password-stdin ${ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com
+
+docker build -t devops-demo-app:latest .
+docker tag devops-demo-app:latest ${REPO_URI}:latest
+docker push ${REPO_URI}:latest
+
+aws ecr describe-images \
+  --repository-name devops-demo-app \
+  --region us-east-2 \
+  --profile devops-admin
+```
+
+### What I learned
+
+* ECR stores Docker images
+* GitHub stores source code, while ECR stores built container images
+* Docker images must be tagged with the full ECR repository URI before pushing
+* `${REPO_URI}:latest` is safer than `$REPO_URI:latest` in shell scripts
+
+---
+
+## 10. GitHub Actions to AWS ECR CI/CD
+
+### What I practiced
+
+* Created a standalone GitHub repo for `ecr-demo-app`
+* Created GitHub Actions workflow
+* Configured GitHub repository secrets
+* Created IAM user for beginner CI/CD lab
+* Attached ECR permissions to GitHub Actions IAM user
+* Built Docker image automatically on push to `main`
+* Logged in to ECR from GitHub Actions
+* Pushed Docker image to ECR
+* Verified image in ECR
+
+### Workflow practiced
+
+```text
+GitHub push
+→ GitHub Actions starts
+→ Checkout source code
+→ Configure AWS credentials
+→ Confirm AWS identity
+→ Login to Amazon ECR
+→ Build Docker image
+→ Tag Docker image
+→ Push Docker image to ECR
+→ Verify image in ECR
+```
+
+### Commands practiced
+
+```bash
+git init
+git branch -M main
+git remote add origin git@github.com:snowwin88/ecr-demo-app.git
+git add .
+git commit -m "Add ECR demo app with GitHub Actions workflow"
+git push -u origin main
+
+aws iam create-user \
+  --user-name github-actions-ecr-user \
+  --profile devops-admin
+
+aws iam create-access-key \
+  --user-name github-actions-ecr-user \
+  --profile devops-admin
+
+aws iam attach-user-policy \
+  --user-name github-actions-ecr-user \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser \
+  --profile devops-admin
+```
+
+### What I learned
+
+* GitHub Actions can automate Docker build and push workflows
+* GitHub repository secrets store sensitive CI/CD credentials
+* IAM credentials authenticate the workflow, but IAM policies authorize what it can do
+* Missing `ecr:GetAuthorizationToken` causes ECR login failure
+* For production, GitHub OIDC is preferred over long-term IAM user access keys
+
+---
+
+## 11. EKS Basic Kubernetes Practice
+
+### What I practiced
+
+* Verified existing `kubectl` installation
+* Installed/used `eksctl`
+* Created an EKS cluster
+* Verified Kubernetes nodes and system pods
+* Deployed Nginx
+* Exposed Nginx using Kubernetes `Service type=LoadBalancer`
+* Checked pods, services, events, logs, and nodes
+* Scaled deployment replicas
+* Deleted a pod and observed Kubernetes self-healing
+* Cleaned up EKS cluster to avoid cost
+
+### Commands practiced
+
+```bash
+kubectl version --client
+kubectl config current-context
+kubectl config get-contexts
+
+eksctl create cluster \
+  --name devops-practice-eks \
+  --region us-east-2 \
+  --nodes 2 \
+  --node-type t3.small \
+  --profile devops-admin
+
+kubectl get nodes
+kubectl get pods -A
+
+kubectl create deployment nginx --image=nginx
+kubectl get deployment
+kubectl get pods -o wide
+
+kubectl expose deployment nginx \
+  --type=LoadBalancer \
+  --port=80
+
+kubectl get svc
+
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+kubectl get events --sort-by=.lastTimestamp
+
+kubectl scale deployment nginx --replicas=3
+
+kubectl delete pod <pod-name>
+
+kubectl delete service nginx
+kubectl delete deployment nginx
+
+eksctl delete cluster \
+  --name devops-practice-eks \
+  --region us-east-2 \
+  --profile devops-admin
+```
+
+### What I learned
+
+* Minikube and EKS use the same core Kubernetes commands
+* `kubectl` uses kubeconfig context to decide whether it talks to Minikube or EKS
+* EKS maps local Kubernetes concepts to AWS-managed Kubernetes
+* `Service type=LoadBalancer` can create an AWS load balancer
+* Kubernetes Deployment maintains desired pod state
+* EKS resources should be deleted quickly after labs to avoid cost
+
+---
+
+## 12. ALB and Auto Scaling Group
+
+### What I practiced
+
+* Created second public subnet for ALB
+* Verified route table had `0.0.0.0/0 -> Internet Gateway`
+* Enabled public IP auto-assignment on subnet
+* Created ALB Security Group
+* Created EC2 Security Group allowing HTTP from ALB SG
+* Created Launch Template with Nginx user data
+* Created Target Group and health check
+* Created internet-facing Application Load Balancer
+* Created HTTP listener on port 80
+* Created Auto Scaling Group with desired capacity 2
+* Verified target health
+* Tested ALB DNS endpoint
+* Terminated one instance and observed ASG replacement
+* Troubleshot unhealthy target status
+
+### Commands practiced
+
+```bash
+aws ec2 describe-subnets \
+  --region us-east-2 \
+  --filters "Name=vpc-id,Values=<vpc-id>" \
+  --profile devops-admin
+
+aws ec2 modify-subnet-attribute \
+  --region us-east-2 \
+  --subnet-id <subnet-id> \
+  --map-public-ip-on-launch \
+  --profile devops-admin
+
+aws ec2 describe-route-tables \
+  --region us-east-2 \
+  --filters "Name=association.subnet-id,Values=<subnet-id>" \
+  --output json \
+  --profile devops-admin
+
+aws ec2 associate-route-table \
+  --region us-east-2 \
+  --route-table-id <route-table-id> \
+  --subnet-id <subnet-id> \
+  --profile devops-admin
+
+aws ec2 create-security-group \
+  --group-name alb-public-http-sg \
+  --description "Allow public HTTP to ALB" \
+  --vpc-id <vpc-id> \
+  --profile devops-admin
+
+aws ec2 authorize-security-group-ingress \
+  --group-id <alb-sg-id> \
+  --protocol tcp \
+  --port 80 \
+  --cidr 0.0.0.0/0 \
+  --profile devops-admin
+
+aws ec2 create-launch-template \
+  --launch-template-name devops-nginx-template \
+  --launch-template-data file://launch-template-data.json \
+  --profile devops-admin
+
+aws elbv2 create-target-group \
+  --name devops-nginx-tg \
+  --protocol HTTP \
+  --port 80 \
+  --vpc-id <vpc-id> \
+  --target-type instance \
+  --health-check-path / \
+  --profile devops-admin
+
+aws elbv2 create-load-balancer \
+  --name devops-nginx-alb \
+  --subnets <subnet-1> <subnet-2> \
+  --security-groups <alb-sg-id> \
+  --scheme internet-facing \
+  --type application \
+  --profile devops-admin
+
+aws elbv2 create-listener \
+  --load-balancer-arn <alb-arn> \
+  --protocol HTTP \
+  --port 80 \
+  --default-actions Type=forward,TargetGroupArn=<tg-arn> \
+  --profile devops-admin
+
+aws autoscaling create-auto-scaling-group \
+  --auto-scaling-group-name devops-nginx-asg \
+  --launch-template LaunchTemplateName=devops-nginx-template,Version='$Latest' \
+  --min-size 1 \
+  --max-size 3 \
+  --desired-capacity 2 \
+  --vpc-zone-identifier "<subnet-1>,<subnet-2>" \
+  --target-group-arns <tg-arn> \
+  --health-check-type ELB \
+  --profile devops-admin
+
+aws elbv2 describe-target-health \
+  --target-group-arn <tg-arn> \
+  --profile devops-admin
+```
+
+### What I learned
+
+* ALB requires at least two subnets in different Availability Zones
+* A public subnet needs a route to Internet Gateway
+* ALB Security Group should allow public HTTP
+* EC2 Security Group can allow HTTP only from ALB Security Group
+* Target Group health checks determine whether ALB sends traffic to an instance
+* Auto Scaling Group maintains desired capacity
+* `healthy`, `unhealthy`, and `draining` target states are important for troubleshooting
+* If one instance becomes unhealthy or terminated, ASG can launch a replacement
+
+---
+
+## 13. Bash and Python AWS Automation Scripts
+
+### What I practiced
+
+* Created Bash scripts for AWS inventory and cleanup checks
+* Created Python `boto3` scripts for EC2 inventory and security checks
+* Listed running EC2 instances
+* Audited Security Groups allowing public SSH
+* Found unattached EBS volumes
+* Listed ECR images
+* Checked cost-related resources such as EC2, EBS, ALB, and EKS
+
+### Scripts created
+
+```text
+scripts/aws/
+  ec2_inventory.sh
+  find_public_ssh.sh
+  find_unattached_volumes.sh
+  ecr_images.sh
+  aws_cleanup_check.sh
+  ec2_inventory.py
+  audit_public_ssh.py
+  find_unattached_volumes.py
+```
+
+### Commands practiced
+
+```bash
+chmod +x ec2_inventory.sh
+./ec2_inventory.sh
+
+chmod +x find_public_ssh.sh
+./find_public_ssh.sh
+
+chmod +x find_unattached_volumes.sh
+./find_unattached_volumes.sh
+
+chmod +x aws_cleanup_check.sh
+./aws_cleanup_check.sh
+
+python3 ec2_inventory.py
+python3 audit_public_ssh.py
+python3 find_unattached_volumes.py
+```
+
+### What I learned
+
+* Automation scripts reduce repetitive manual work
+* AWS CLI scripts are useful for quick operational checks
+* Python `boto3` scripts are useful for more flexible automation
+* Public SSH exposure can be audited automatically
+* Unattached EBS volumes can create unnecessary cost
+* Cost cleanup scripts help avoid forgotten resources after training labs
+
+---
+
+## 14. Incident Response and Post-Mortem Documentation
+
+### What I practiced
+
+* Documented real troubleshooting scenarios
+* Used incident response format with impact, detection, investigation, root cause, resolution, verification, and prevention
+* Converted hands-on issues into reusable post-mortem examples
+
+### Incidents documented
+
+```text
+incidents/
+  incident-http-security-group.md
+  incident-region-mismatch.md
+  incident-terraform-default-subnet.md
+  incident-github-actions-ecr-permission.md
+```
+
+### Incident scenarios practiced
+
+1. EC2 HTTP service unreachable from internet
+2. AWS CLI could not find EC2 due to region mismatch
+3. Terraform failed to create EC2 due to missing default subnet
+4. GitHub Actions failed to push to ECR due to missing IAM ECR permission
+5. ALB Target Group unhealthy target due to failed health checks
+
+### What I learned
+
+* Incident response is not only about fixing the issue; it is also about documenting what happened
+* Good post-mortems include impact, detection, timeline, root cause, resolution, verification, and prevention
+* Many production issues are caused by configuration errors, not application code
+* Troubleshooting should follow a structured flow: check symptoms, isolate layers, verify assumptions, fix, and document prevention actions
+
+---
+
+## 15. Cost Control and Cleanup
+
+### What I practiced
+
+* Deleted temporary EC2 instances
+* Destroyed Terraform-managed resources
+* Deleted EKS cluster after lab
+* Deleted ALB, Target Group, Launch Template, ASG, and Security Groups after testing
+* Checked for running EC2, unattached EBS volumes, Load Balancers, and EKS clusters
+* Used cleanup scripts to reduce surprise cost risk
+
+### Commands practiced
+
+```bash
+terraform destroy
+
+eksctl delete cluster \
+  --name devops-practice-eks \
+  --region us-east-2 \
+  --profile devops-admin
+
+aws autoscaling delete-auto-scaling-group \
+  --auto-scaling-group-name devops-nginx-asg \
+  --force-delete \
+  --profile devops-admin
+
+aws elbv2 delete-load-balancer \
+  --load-balancer-arn <alb-arn> \
+  --profile devops-admin
+
+aws elbv2 delete-target-group \
+  --target-group-arn <tg-arn> \
+  --profile devops-admin
+
+aws ec2 describe-instances \
+  --filters "Name=instance-state-name,Values=running" \
+  --profile devops-admin
+
+aws ec2 describe-volumes \
+  --filters "Name=status,Values=available" \
+  --profile devops-admin
+
+aws eks list-clusters \
+  --region us-east-2 \
+  --profile devops-admin
+```
+
+### What I learned
+
+* Cloud resources can continue charging after labs if not cleaned up
+* EKS, ALB, NAT Gateway, EBS, and EC2 are important resources to check after practice
+* Cleanup is part of responsible DevOps operations
+* Cost awareness is part of production engineering
+
+---
+
+## 16. Final Skills Summary
+
+Through this training project, I practiced:
+
+* AWS IAM, SSO, and CLI usage
+* EC2 provisioning and troubleshooting
+* S3 bucket operations and security configuration
+* VPC, subnet, route table, Internet Gateway, and Security Group concepts
+* Terraform Infrastructure as Code
+* Terraform remote state with S3 backend
+* Terraform modules
+* Terraform multi-environment structure
+* CloudWatch alarms and SNS notifications
+* Docker image build and Amazon ECR push
+* GitHub Actions CI/CD pipeline to ECR
+* Kubernetes operations with Minikube and EKS
+* ALB, Target Group, Launch Template, and Auto Scaling Group
+* Bash and Python automation for AWS operations
+* Cost cleanup checks
+* Incident response and post-mortem documentation
+
+---
+
+## 17. Project Summary
+
+This project helped me build practical AWS and DevOps hands-on experience. I practiced provisioning and troubleshooting AWS infrastructure including EC2, S3, IAM, VPC, Security Groups, ALB, Auto Scaling, ECR, CloudWatch, and EKS. I also used Terraform to manage infrastructure as code, including remote state, modules, and multi-environment structure. For CI/CD, I built a GitHub Actions pipeline that builds a Docker image and pushes it to Amazon ECR. I also created Bash and Python automation scripts for inventory, security audit, and cost cleanup checks. Finally, I documented incident response scenarios such as blocked HTTP access, AWS region mismatch, Terraform subnet errors, ECR IAM permission issues, and ALB health check failures. This training gave me practical experience in infrastructure provisioning, monitoring, automation, CI/CD, Kubernetes, high availability, cost control, and incident response.
+
+```
+```
 
